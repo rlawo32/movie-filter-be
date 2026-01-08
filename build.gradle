@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     compileOnly 'org.projectlombok:lombok'
@@ -34,6 +35,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // postgresql dependency
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
+    runtimeOnly 'org.postgresql:postgresql'
 }
 
 tasks.named('test') {
