@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'war'
-    id 'org.springframework.boot' version '4.0.1'
+    id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -28,17 +28,31 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+
+    // 아래 implementation 오류나서 변경 - ms 20260109
+    //implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat-runtime'
-    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+
+    // 아래 runtime 오류나서 변경 - ms 20260109
+    //providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat-runtime'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    // 아래 testImplementation 오류나서 변경 - ms 20260109
+    //testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    //testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test' // security-test -> spring-security-test
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // postgresql dependency
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
     runtimeOnly 'org.postgresql:postgresql'
+
+    // 소셜 로그인 라이브러리 - ms 20260109
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
