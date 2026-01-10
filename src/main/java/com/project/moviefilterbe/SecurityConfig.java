@@ -17,19 +17,20 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
+    // SecurityConfig.java의 filterChain 메소드 수정 - ms 20260110
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // 메인 페이지나 로그인 관련 주소는 모두 허용
                         .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                // 소셜 로그인 설정 추가
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService) // 핵심: 작성한 서비스 연결
+                                .userService(customOAuth2UserService)
                         )
+                        // 성공 시 리다이렉트 경로를 프론트엔드 주소로 명시
+                        .defaultSuccessUrl("http://localhost:3000", true)
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
