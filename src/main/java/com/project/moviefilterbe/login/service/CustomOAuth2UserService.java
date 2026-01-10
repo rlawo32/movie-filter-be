@@ -15,8 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    // DB를 막기 위해 잠시 주석처리 - ms 20260109
-    //private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
@@ -37,18 +36,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         System.out.println("Provider ID: " + providerId);
         System.out.println("===============================");
 
-        /* // DB 저장 로직은 잠시 주석 처리합니다.
+        // DB 저장 로직 주석
+        // CustomOAuth2UserService.java 내부
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> userRepository.save(
                         User.builder()
+                                .uiId(email) // PK인 ui_id에 값 할당
                                 .email(email)
                                 .name(name)
                                 .profileImage(picture)
+                                .role("USER")   // 기본값 설정
+                                .status("ACTIVE") // 기본값 설정
                                 .provider("google")
                                 .providerId(providerId)
                                 .build()
                 ));
-        */
+
 
         return oAuth2User;
     }
