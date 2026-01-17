@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "mf_users_info") // PostgreSQL에서 'user'는 예약어이므로 'users'로 이름을 지정합니다.
+@Table(name = "mf_users_info")
 public class User {
 
     @Id
@@ -21,7 +21,7 @@ public class User {
     @Column(name = "ui_image")
     private String profileImage;
 
-    // Supabase에 email 컬럼을 추가하지 않았다면 에러가 날 수 있습니다.
+    // Supabase
     @Column(name = "ui_email")
     private String email;
 
