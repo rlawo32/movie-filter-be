@@ -1,39 +1,45 @@
 package com.project.moviefilterbe;
 
-import com.project.moviefilterbe.login.service.CustomOAuth2UserService; // 추가
-import lombok.RequiredArgsConstructor; // 추가
+import com.project.moviefilterbe.login.handler.OAuth2SuccessHandler; // 추가
+import com.project.moviefilterbe.login.service.CustomOAuth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy; // 추가
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor // 생성자 주입을 위해 추가
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    // 우리가 만든 서비스를 가져옵니다.
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler; // 추가
 
     @Bean
-    // SecurityConfig.java의 filterChain 메소드 수정 - ms 20260110
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                // 1. JWT 사용을 위해 세션 설정을 STATELESS로 변경
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/", "/login/**", "/oauth2/**", "/login-success/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
-                        // 성공 시 리다이렉트 경로를 프론트엔드 주소로 명시
-                        .defaultSuccessUrl("http://localhost:3000", true)
-                )
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable());
+                        // 2. defaultSuccessUrl 대신 핸들러를 등록
+                        .successHandler(oAuth2SuccessHandler)
+                );
 
         return http.build();
     }
